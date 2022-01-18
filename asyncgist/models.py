@@ -41,94 +41,16 @@ class File:
     def __repr__(self) -> None:
         return f"<File filename={self.filename} raw_url={self.raw_url} size={self.size}>"
 
-
-class Gist:
-    """
-    Represents a gist.
-    """
-
-    def __init__(self, data: dict) -> None:
-        self.data = data
-    
-    def __repr__(self) -> str:
-        return f"<Gist html_url={self.data['html_url']}>"
-
-    @property
-    def url(self) -> str:
-        return self.data["url"]
-
-    @property
-    def forks_url(self) -> str:
-        return self.data["forks_url"]
-
-    @property
-    def commits_url(self) -> str:
-        return self.data["commits_url"]
-
-    @property
-    def id(self) -> str:
-        return self.data["id"]
-
-    @property
-    def node_id(self) -> str:
-        return self.data["node_id"]
-
-    @property
-    def git_pull_url(self) -> str:
-        return self.data["git_pull_url"]
-
-    @property
-    def git_push_url(self) -> str:
-        return self.data["git_push_url"]
-
-    @property
-    def html_url(self) -> str:
-        return self.data["html_url"]
-
-    @property
-    def files(self) -> List[File]:
-        return self.data["files"]
-
-    @property
-    def public(self) -> bool:
-        return self.data["public"]
-
-    @property
-    def created_at(self) -> datetime:
-        time = self.data["created_at"]
-        return datetime.strptime(time, "%Y-%m-%dT%H:%M:%S%z")
-
-    @property
-    def updated_at(self) -> datetime:
-        time = self.data["created_at"]
-        return datetime.strptime(time, "%Y-%m-%dT%H:%M:%S%z")
-
-    @property
-    def description(self) -> str:
-        return self.data["description"]
-
-    @property
-    def comments(self) -> dict:
-        # returns dict for now.
-        return self.data["comments"]
-
-    @property
-    def user(self) -> dict:
-        # returns dict for now.
-        return self.data["user"]
-
-    @property
-    def comments_url(self) -> str:
-        return self.data["comments_url"]
-
-    @property
-    def owner(self) -> str:
-        # returns dict for now.
-        return self.data["owner"]
-
-    @property
-    def truncated(self) -> bool:
-        return self.data["truncated"]
+    @classmethod
+    def from_dict(cls, data: dict):
+        self = cls.__new__(cls)
+        self.filename = data["filename"]
+        self.type = data["type"]
+        self.content = data["content"]
+        self.language = data["language"]
+        self.raw_url = data["raw_url"]
+        self.size = data["size"]
+        return self
 
 
 class User:
@@ -206,3 +128,97 @@ class User:
     @property
     def site_admin(self) -> bool:
         return self.data["site_admin"]
+
+
+class Gist:
+    """
+    Represents a gist.
+    """
+
+    def __init__(self, data: dict) -> None:
+        self.data = data
+
+    def __repr__(self) -> str:
+        return f"<Gist html_url={self.data['html_url']}>"
+
+    @property
+    def url(self) -> str:
+        return self.data["url"]
+
+    @property
+    def forks_url(self) -> str:
+        return self.data["forks_url"]
+
+    @property
+    def commits_url(self) -> str:
+        return self.data["commits_url"]
+
+    @property
+    def id(self) -> str:
+        return self.data["id"]
+
+    @property
+    def node_id(self) -> str:
+        return self.data["node_id"]
+
+    @property
+    def git_pull_url(self) -> str:
+        return self.data["git_pull_url"]
+
+    @property
+    def git_push_url(self) -> str:
+        return self.data["git_push_url"]
+
+    @property
+    def html_url(self) -> str:
+        return self.data["html_url"]
+
+    @property
+    def files(self) -> List[File]:
+        data = self.data["files"]
+        return [File.from_dict(val) for _, val in data.items()]
+
+    @property
+    def public(self) -> bool:
+        return self.data["public"]
+
+    @property
+    def created_at(self) -> datetime:
+        time = self.data["created_at"]
+        return datetime.strptime(time, "%Y-%m-%dT%H:%M:%S%z")
+
+    @property
+    def updated_at(self) -> datetime:
+        time = self.data["created_at"]
+        return datetime.strptime(time, "%Y-%m-%dT%H:%M:%S%z")
+
+    @property
+    def description(self) -> str:
+        return self.data["description"]
+
+    @property
+    def comments(self) -> dict:
+        # returns dict for now.
+        return self.data["comments"]
+
+    @property
+    def user(self) -> User:
+        user = self.data["user"]
+        if user is None:
+            return None
+        return User(user)
+
+    @property
+    def comments_url(self) -> str:
+        return self.data["comments_url"]
+
+    @property
+    def owner(self) -> User:
+        owner = self.data["owner"]
+        if owner is None:
+            return None
+        return User(owner)
+
+    @property
+    def truncated(self) -> bool:
+        return self.data["truncated"]
