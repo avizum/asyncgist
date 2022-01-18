@@ -38,6 +38,9 @@ class File:
         self.raw_url = raw_url
         self.size = size
 
+    def __repr__(self) -> None:
+        return f"<File filename={self.filename} raw_url={self.raw_url} size={self.size}>"
+
 
 class Gist:
     """
@@ -46,6 +49,9 @@ class Gist:
 
     def __init__(self, data: dict) -> None:
         self.data = data
+    
+    def __repr__(self) -> str:
+        return f"<Gist html_url={self.data['html_url']}>"
 
     @property
     def url(self) -> str:
