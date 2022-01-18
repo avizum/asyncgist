@@ -149,7 +149,6 @@ class Client:
         :class:`Gist`
         """
         gist_id = convert(id_or_url)
-        print(gist_id)
         output = await self.request(Request("GET", f"/{gist_id}"))
         return Gist(output)
 
