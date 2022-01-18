@@ -6,6 +6,6 @@ An asynchronous wrapper for the GitHub Gist Rest API.
 pip install asyncgist
 ```
 ### Examples 
-* [Posting a gist](https://github.com/avizum/asyncgist/examples/create_gist.py)
-* [Deleting a gist](https://github.com/avizum/asyncgist/examples/delete.py)
-* [Editing a gist](https://github.com/avizum/asyncgist/examples/create_gist.py)
+* [Posting a gist](https://github.com/avizum/asyncgist/blob/master/examples/create_gist.py)
+* [Deleting a gist](https://github.com/avizum/asyncgist/blob/master/examples/delete_gist.py)
+* [Editing a gist](https://github.com/avizum/asyncgist/blob/master/examples/create_gist.py)
