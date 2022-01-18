@@ -3,7 +3,7 @@ An asynchronous wrapper for the GitHub Gist Rest API.
 ***
 ## Installing asyncgist
 ```sh
-pip install asyncgist
+pip install git+https://github.com/avizum/asyncgist
 ```
 ### Examples 
 * [Posting a gist](https://github.com/avizum/asyncgist/blob/master/examples/create_gist.py)
