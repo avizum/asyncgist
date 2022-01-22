@@ -86,8 +86,6 @@ class Client:
             One or list of :class:`File` is required.
         public: :class:`bool`
             Indicate whether the Gist is public.
-        raw: :class:`bool`
-            Whether to return raw json or the url of the Gist.
 
         Returns
         -------
