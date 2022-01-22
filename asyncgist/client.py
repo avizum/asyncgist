@@ -100,7 +100,7 @@ class Client:
 
         data = {"public": public, "files": files, "description": description}
         output = await self.request(Request("POST"), json=data)
-        return Gist(output)
+        return Gist(self, output)
 
     async def update_gist(self, *, id_or_url: str, description: str, files: Union[File, List[File]]) -> Gist:
         """
@@ -131,7 +131,7 @@ class Client:
         files = {f.filename: {"content": f.content} for f in files}
         data = {"description": description, files: files}
         output = await self.request(Request("PATCH", f"/{gist_id}"), json=data)
-        return Gist(output)
+        return Gist(self, output)
 
     async def fetch_gist(self, id_or_url: str) -> Gist:
         """
@@ -155,7 +155,7 @@ class Client:
         """
         gist_id = convert(id_or_url)
         output = await self.request(Request("GET", f"/{gist_id}"))
-        return Gist(output)
+        return Gist(self, output)
 
     async def delete_gist(self, id_or_url: str) -> None:
         """
@@ -222,7 +222,7 @@ class Client:
         """
         gist_id = convert(id_or_url)
         output = await self.request(Request("POST", f"/{gist_id}/forks"))
-        return Gist(output)
+        return Gist(self, output)
 
     async def fetch_comments(self, id_or_url: str, per_page: int = 30, page: int = 1) -> List[Comment]:
         """
