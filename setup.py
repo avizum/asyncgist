@@ -7,7 +7,7 @@ with open("requirements.txt", "r") as f:
 setup(
     name="asyncgist",
     author="avizum",
-    version="1.0.0",
+    version="1.0.1",
     packages=["asyncgist"],
     url="https://github.com/avizum/asyncgist",
     description="Async wrapper around the GitHub Gist API",

@@ -1,10 +1,12 @@
+from __future__ import annotations
 from datetime import datetime
-from typing import List
+from typing import List, Union
+from .client import Client
 
 
 class File:
     """
-    Represents a gist file.
+    Represents a Gist file.
 
     Attributes
     ----------
@@ -44,181 +46,184 @@ class File:
     @classmethod
     def from_dict(cls, data: dict):
         self = cls.__new__(cls)
-        self.filename = data["filename"]
-        self.type = data["type"]
-        self.content = data["content"]
-        self.language = data["language"]
-        self.raw_url = data["raw_url"]
-        self.size = data["size"]
+        self.filename = data.get("filename")
+        self.type = data.get("type")
+        self.content = data.get("content")
+        self.language = data.get("language")
+        self.raw_url = data.get("raw_url")
+        self.size = data.get("size")
         return self
 
 
 class User:
+    """
+    Represents a GitHub user.
+    """
     def __init__(self, data: dict) -> None:
-        self.data = data
+        self._set(data)
 
-    @property
-    def login(self) -> str:
-        return self.data["login"]
-
-    @property
-    def id(self) -> int:
-        return self.data["id"]
-
-    @property
-    def node_id(self) -> str:
-        return self.data["node_id"]
-
-    @property
-    def avatar_url(self) -> str:
-        return self.data["avatar_url"]
-
-    @property
-    def gravatar_url(self) -> str:
-        return self.data["gravatar_url"]
-
-    @property
-    def url(self) -> str:
-        return self.data["url"]
-
-    @property
-    def html_url(self) -> str:
-        return self.data["html_url"]
-
-    @property
-    def followers_url(self) -> str:
-        return self.data["followers_url"]
-
-    @property
-    def following_url(self) -> str:
-        return self.data["following_url"]
-
-    @property
-    def gists_url(self) -> str:
-        return self.data["gists_url"]
-
-    @property
-    def starred_url(self) -> str:
-        return self.data["starred_url"]
-
-    @property
-    def subscriptions_url(self) -> str:
-        return self.data["subscriptions_url"]
-
-    @property
-    def organizations_url(self) -> str:
-        return self.data["organizations_url"]
-
-    @property
-    def repos_url(self) -> str:
-        return self.data["repos_url"]
-
-    @property
-    def events_url(self) -> str:
-        return self.data["events_url"]
-
-    @property
-    def received_events_url(self) -> str:
-        return self.data["received_events_url"]
-
-    @property
-    def type(self) -> str:
-        return self.data["type"]
-
-    @property
-    def site_admin(self) -> bool:
-        return self.data["site_admin"]
+    def _set(self, data: dict) -> None:
+        self.login: Union[str, None] = data.get("login")
+        self.id: Union[int, None] = data.get("id")
+        self.node_id: Union[str, None] = data.get("node_id")
+        self.avatar_url: Union[str, None] = data.get("avatar_url")
+        self.gravatar_id: Union[str, None] = data.get("gravatar_id")
+        self.url: Union[str, None] = data.get("url")
+        self.html_url: Union[str, None] = data.get("html_url")
+        self.followers_url: Union[str, None] = data.get("followers_url")
+        self.following_url: Union[str, None] = data.get("following_url")
+        self.gists_url: Union[str, None] = data.get("gists_url")
+        self.starred_url: Union[str, None] = data.get("starred_url")
+        self.subscriptions_url: Union[str, None] = data.get("subscriptions_url")
+        self.organizations_url: Union[str, None] = data.get("organizations_url")
+        self.repos_url: Union[str, None] = data.get("repos_url")
+        self.events_url: Union[str, None] = data.get("events_url")
+        self.received_events_url: Union[str, None] = data.get("received_events_url")
+        self.type: Union[str, None] = data.get("type")
+        self.site_admin: Union[bool, None] = data.get("site_admin")
 
 
 class Gist:
     """
-    Represents a gist.
+    Represents a Gist.
     """
-
-    def __init__(self, data: dict) -> None:
-        self.data = data
+    def __init__(self, client: Client, data: dict) -> None:
+        if not data.get("id"):
+            raise ValueError("Gist must have an id.")
+        self.client = client
+        self._set(data)
 
     def __repr__(self) -> str:
-        return f"<Gist html_url={self.data['html_url']}>"
+        return f"<Gist html_url={self.html_url}>"
 
-    @property
-    def url(self) -> str:
-        return self.data["url"]
+    def _set(self, data: dict) -> None:
+        self.url: Union[str, None] = data.get("url")
+        self.forks_url: Union[str, None] = data.get("forks_url")
+        self.commits_url: Union[str, None] = data.get("commits_url")
+        self.id: Union[int, None] = data.get("id")
+        self.node_id: Union[str, None] = data.get("node_id")
+        self.git_pull_url: Union[str, None] = data.get("git_pull_url")
+        self.git_push_url: Union[str, None] = data.get("git_push_url")
+        self.html_url: Union[str, None] = data.get("html_url")
+        self.public: Union[bool, None] = data.get("public")
+        self.description: Union[str, None] = data.get("description")
+        self.comments: Union[dict, None] = data.get("comments")
+        self.comments_url: Union[str, None] = data.get("comments_url")
+        self.truncated: Union[bool, None] = data.get("truncated")
 
-    @property
-    def forks_url(self) -> str:
-        return self.data["forks_url"]
+        created_at = data.get("created_at")
+        created_datetime = datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%S%z")
+        self.created_at: Union[datetime, None] = created_datetime
 
-    @property
-    def commits_url(self) -> str:
-        return self.data["commits_url"]
+        updated_at = data.get("updated_at")
+        updated_datetime = datetime.strptime(updated_at, "%Y-%m-%dT%H:%M:%S%z")
+        self.updated_at: Union[datetime, None] = updated_datetime
 
-    @property
-    def id(self) -> str:
-        return self.data["id"]
+        owner = data.get("owner")
+        self.owner: Union[User, None] = owner if owner is None else User(owner)
 
-    @property
-    def node_id(self) -> str:
-        return self.data["node_id"]
+        user = data.get("user")
+        self.user: Union[User, None] = user if user is None else User(user)
 
-    @property
-    def git_pull_url(self) -> str:
-        return self.data["git_pull_url"]
+        files = data.get("files")
+        self.files: Union[List[File], None] = [File.from_dict(val) for _, val in files.items()]
 
-    @property
-    def git_push_url(self) -> str:
-        return self.data["git_push_url"]
+    async def update(self, description: str, files: Union[File, List[File]]) -> Gist:
+        """
+        Updates the Gist.
 
-    @property
-    def html_url(self) -> str:
-        return self.data["html_url"]
+        Parameters
+        ----------
+        description: Optional[:class:`str`]
+            The new description of the Gist.
+        files: Union[:class:`File`, List[:class:`File`]]
+            The new files or files to be updated.
 
-    @property
-    def files(self) -> List[File]:
-        data = self.data["files"]
-        return [File.from_dict(val) for _, val in data.items()]
+        Returns
+        -------
+        :class:`Gist`
+            The newly updated Gist.
+        """
+        return self.client.update_gist(id_or_url=self.id, description=description, files=files)
 
-    @property
-    def public(self) -> bool:
-        return self.data["public"]
+    async def delete(self) -> None:
+        """
+        Deletes the Gist.
+        """
+        return self.client.delete_gist(self.id)
 
-    @property
-    def created_at(self) -> datetime:
-        time = self.data["created_at"]
-        return datetime.strptime(time, "%Y-%m-%dT%H:%M:%S%z")
+    async def star(self) -> None:
+        """
+        Stars the Gist.
+        """
+        return self.client.star_gist(self.id)
 
-    @property
-    def updated_at(self) -> datetime:
-        time = self.data["created_at"]
-        return datetime.strptime(time, "%Y-%m-%dT%H:%M:%S%z")
+    async def unstar(self) -> None:
+        """
+        Unstats the Gist.
+        """
+        return self.client.unstar_gist(self.id)
 
-    @property
-    def description(self) -> str:
-        return self.data["description"]
+    async def fork(self) -> Gist:
+        """
+        Forks the Gist.
+        """
+        return self.client.fork_gist(self.id)
 
-    @property
-    def comments(self) -> dict:
-        # returns dict for now.
-        return self.data["comments"]
+    async def post_comment(self, content: str):
+        """
+        Posts a comment on a Gist.
 
-    @property
-    def user(self) -> User:
-        user = self.data["user"]
-        if user is None:
-            return None
-        return User(user)
+        Parameters
+        ----------
+        content: :class:`str`
+            The content of the comment.
 
-    @property
-    def comments_url(self) -> str:
-        return self.data["comments_url"]
+        Raises
+        ------
+        :class:`Forbidden`
+            You do not have permission to post comments on the Gist.
 
-    @property
-    def owner(self) -> User:
-        owner = self.data["owner"]
-        if owner is None:
-            return None
-        return User(owner)
+        Returns
+        -------
+        :class:`Comment`
+            The posted comment.
+        """
+        return self.client.post_comment(self.id, content)
 
-    @property
-    def truncated(self) -> bool:
-        return self.data["truncated"]
+    async def fetch_comments(self, per_page: int = 30, page: int = 1) -> Union[Comment, List[Comment]]:
+        """
+        Fetches comments of a Gist.
+
+        Parameters
+        ----------
+        per_page: :class:`int`
+            How many results per page. (Default: `30`, Maximum: `100`)
+        page: :class:`int`
+            Page number of the results to fetch. (Default: `1`)
+
+        Raises
+        ------
+        :class:`Forbidden`
+            You do not have permission to fetch the Gist's comments.
+
+        Returns
+        -------
+        List[:class:`Comment`]
+            The list of comments.
+        """
+        return self.client.fetch_comments(self.id, per_page, page)
+
+
+class Comment:
+    def __init__(self, data: dict):
+        self._set(data)
+
+    def _set(self, data: dict):
+        self.id: Union[int, None] = data.get("id")
+        self.node_id: Union[str, None] = data.get("node_id")
+        self.url: Union[str, None] = data.get("url")
+        self.body: Union[str, None] = data.get("body")
+
+        user = data.get("user")
+        self.user: User(user)
