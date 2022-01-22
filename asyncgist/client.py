@@ -60,19 +60,19 @@ class Client:
         :class:`dict`
             The raw json response.
         """
-        resp = await self.session.request(request.method, request.url, **kwargs)
-        if 300 > resp.status >= 200:
-            try:
-                item = await resp.json()
-            except Exception:
-                item = None
-            return item
-        elif resp.status == 404:
-            raise NotFound(resp.status, resp.reason, await resp.text())
-        elif resp.status == 403:
-            raise Forbidden(resp.status, resp.reason, await resp.text())
-        else:
-            raise HTTPExeption(resp.status, resp.reason, await resp.text())
+        async with self.session.request(request.method, request.url, **kwargs) as resp:
+            if 300 > resp.status >= 200:
+                try:
+                    item = await resp.json()
+                except Exception:
+                    item = None
+                return item
+            elif resp.status == 404:
+                raise NotFound(resp.status, resp.reason, await resp.text())
+            elif resp.status == 403:
+                raise Forbidden(resp.status, resp.reason, await resp.text())
+            else:
+                raise HTTPExeption(resp.status, resp.reason, await resp.text())
 
     async def post_gist(self, *, description: str, files: Union[File, List[File]], public: bool) -> Gist:
         """
@@ -102,7 +102,7 @@ class Client:
         output = await self.request(Request("POST"), json=data)
         return Gist(self, output)
 
-    async def update_gist(self, *, id_or_url: str, description: str, files: Union[File, List[File]]) -> Gist:
+    async def update_gist(self, id_or_url: str, description: str, files: Union[File, List[File]]) -> Gist:
         """
         Updates a Gist.
 
@@ -251,7 +251,7 @@ class Client:
         """
         gist_id = convert(id_or_url)
         data = {"per_page": per_page, "page": page}
-        output = await self.request(Request("GET", f"/{gist_id}/comments"), data)
+        output = await self.request(Request("GET", f"/{gist_id}/comments"), json=data)
         return [Comment(comment) for comment in output]
 
     async def post_comment(self, id_or_url: str, content: str) -> Comment:
@@ -278,9 +278,10 @@ class Client:
             The posted comment.
         """
         gist_id = convert(id_or_url)
-        data = {"content": content}
-        output = await self.request(Request("GET", f"/{gist_id}/comments"), data)
-        return Comment(output)
+        data = {"body": content}
+        output = await self.request(Request("POST", f"/{gist_id}/comments"), json=data)
+        output["gist_id"] = gist_id
+        return Comment(self, output)
 
     async def update_comment(self, id_or_url: str, comment_id: int, content: str) -> Comment:
         """
@@ -292,6 +293,8 @@ class Client:
             The id or url of the Gist.
         comment_id: :class:`int`
             The id of the comment.
+        content: :class:`str`
+            The new content of the comment.
 
         Raises
         ------
@@ -307,12 +310,13 @@ class Client:
         """
         gist_id = convert(id_or_url)
         data = {"body": content}
-        output = await self.request(Request("PATCH", f"/{gist_id}/comments/{comment_id}"), data)
-        return Comment(output)
+        output = await self.request(Request("PATCH", f"/{gist_id}/comments/{comment_id}"), json=data)
+        output["gist_id"] = gist_id
+        return Comment(self, output)
 
     async def delete_comment(self, id_or_url: str, comment_id: int) -> None:
         """
-        Updates a comment in a Gist.
+        Deletes a comment in a Gist.
 
         Parameters
         ----------
@@ -327,7 +331,6 @@ class Client:
             The Gist or comment was not found.
         :class:`Forbidden`
             You do not have permission to delete the comment, or view the Gist.
-
         """
         gist_id = convert(id-id_or_url)
         return await self.request(Request("DELETE", f"/{gist_id}/comments/{comment_id}"))
