@@ -1,7 +1,8 @@
 from __future__ import annotations
 from datetime import datetime
-from typing import List, Union
-from .client import Client
+from typing import List, Union, TYPE_CHECKING
+if TYPE_CHECKING:
+    from .client import Client
 
 
 class File:
