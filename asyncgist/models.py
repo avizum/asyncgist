@@ -145,31 +145,31 @@ class Gist:
         :class:`Gist`
             The newly updated Gist.
         """
-        return self.client.update_gist(id_or_url=self.id, description=description, files=files)
+        return await self.client.update_gist(id_or_url=self.id, description=description, files=files)
 
     async def delete(self) -> None:
         """
         Deletes the Gist.
         """
-        return self.client.delete_gist(self.id)
+        return await self.client.delete_gist(self.id)
 
     async def star(self) -> None:
         """
         Stars the Gist.
         """
-        return self.client.star_gist(self.id)
+        return await self.client.star_gist(self.id)
 
     async def unstar(self) -> None:
         """
         Unstats the Gist.
         """
-        return self.client.unstar_gist(self.id)
+        return await self.client.unstar_gist(self.id)
 
     async def fork(self) -> Gist:
         """
         Forks the Gist.
         """
-        return self.client.fork_gist(self.id)
+        return await self.client.fork_gist(self.id)
 
     async def post_comment(self, content: str):
         """
@@ -190,7 +190,7 @@ class Gist:
         :class:`Comment`
             The posted comment.
         """
-        return self.client.post_comment(self.id, content)
+        return await self.client.post_comment(self.id, content)
 
     async def fetch_comments(self, per_page: int = 30, page: int = 1) -> Union[Comment, List[Comment]]:
         """
@@ -213,7 +213,7 @@ class Gist:
         List[:class:`Comment`]
             The list of comments.
         """
-        return self.client.fetch_comments(self.id, per_page, page)
+        return await self.client.fetch_comments(self.id, per_page, page)
 
 
 class Comment:
